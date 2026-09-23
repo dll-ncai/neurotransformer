@@ -1,0 +1,14 @@
+torch>=1.12
+numpy
+scipy
+scikit-learn
+pandas
+pyyaml
+tqdm
+# Optional: TUEV preprocessing and EEG/topomap plots
+mne
+matplotlib
+# Optional: FLOP counting in scripts/benchmark.py
+thop
+# Notebooks
+jupyter

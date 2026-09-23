@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Data, checkpoints and experiment outputs
+/data/
+/runs/
+/results/
+/checkpoints/
+*.pth
+*.pt
+*.ckpt
+*.npz
+*.edf
+
+# Environment / editor
+.venv/
+venv/
+.env
+.vscode/
+.idea/
+.DS_Store

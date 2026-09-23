@@ -1,0 +1,26 @@
+# NMT-Events: 3 classes (Normal / SW / SSW), subject-wise train/eval/test splits.
+# Training hyperparameters follow the paper (Table 2), shared by all datasets.
+dataset: nmt
+data_root: data/nmt          # must contain train/, eval/, test/ folders of .npz windows
+model: neurotransformer
+epochs: 100
+batch_size: 32
+num_workers: 4
+
+optimizer:
+  name: adam
+  lr: 1.0e-3
+  betas: [0.9, 0.98]
+  eps: 1.0e-9
+
+scheduler: null
+
+loss:
+  # Weighted cross-entropy with inverse-frequency weights N / (K * count_k), counted on the training split.
+  # Add class_counts: [...] to skip counting, or set class_weights: null for an unweighted loss.
+  class_weights: balanced
+  label_smoothing: 0.0
+
+# Keep the checkpoint with the lowest validation loss; stop after 10 epochs without improvement.
+monitor: eval_loss
+patience: 10

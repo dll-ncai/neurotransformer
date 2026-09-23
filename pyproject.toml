@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neurotransformer"
+version = "0.1.0"
+description = "Hybrid convolution-transformer model for single-channel EEG event classification"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.8"
+dependencies = [
+    "torch>=1.12",
+    "numpy",
+    "scipy",
+    "scikit-learn",
+    "pandas",
+    "pyyaml",
+    "tqdm",
+]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+
+[project.optional-dependencies]
+preprocess = ["mne"]
+viz = ["matplotlib", "mne"]
+bench = ["thop"]
+notebooks = ["jupyter", "matplotlib", "mne", "thop"]
+all = ["mne", "matplotlib", "thop", "jupyter"]
+
+[tool.setuptools.packages.find]
+include = ["neurotransformer*"]
