@@ -57,11 +57,11 @@ logits = model(x)                   # (8, 3)
 The datasets are not redistributed here. Each one is turned into one `.npz` file per window under
 `data/<dataset>/{train,eval,test}/`.
 
-| Dataset | Task | Classes | Windows (train / eval / test) |
-|---|---|---|---|
-| **NMT events** | 3-class | Normal · SW · SSW | 215,209 / 38,440 / 65,333 |
-| **Bonn** ([Andrzejak et al., 2001](https://doi.org/10.1103/PhysRevE.64.061907)) | 3-class | Normal (A/Z, B/O) · Interictal (C/N, D/F) · Ictal (E/S) | 7,700 / 1,650 / 1,650 |
-| **TUEV** ([TUH EEG Events](https://isip.piconepress.com/projects/nedc/html/tuh_eeg/)) | binary | Non-epileptic (EYEM, ARTF, BCKG) · Epileptic (SPSW, GPED, PLED) | train / eval (official split) |
+| Dataset | Task | Classes |
+|---|---|---|
+| **NMT events** | 3-class | Normal · SW · SSW |
+| **Bonn** ([Andrzejak et al., 2001](https://doi.org/10.1103/PhysRevE.64.061907)) | 3-class | Normal (A/Z, B/O) · Interictal (C/N, D/F) · Ictal (E/S) |
+| **TUEV** ([TUH EEG Events](https://isip.piconepress.com/projects/nedc/html/tuh_eeg/)) | binary | Non-epileptic (EYEM, ARTF, BCKG) · Epileptic (SPSW, GPED, PLED) |
 
 **Bonn:** download the five sets (Z, O, N, F, S; 100 × 23.6 s recordings each), then run:
 
