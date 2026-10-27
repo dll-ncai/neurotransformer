@@ -126,6 +126,32 @@ report accuracy, precision, recall, F1, specificity and AUROC:
 - **Three classes:** macro-averaged metrics and one-vs-rest AUROC.
 - **Binary:** metrics are for the positive (epileptiform) class.
 
+## Significance testing
+
+`scripts/mcnemar.py` runs McNemar tests of one model against others on the same windows. First, save each
+model's per-window predictions with `--save-preds`:
+
+```bash
+python scripts/evaluate.py --config runs/tuev/neurotransformer/config.yaml \
+    --checkpoint runs/tuev/neurotransformer/best.pth --split eval \
+    --save-preds runs/tuev/neurotransformer/preds_eval.npz
+
+python scripts/mcnemar.py --reference runs/tuev/neurotransformer/preds_eval.npz \
+    --compare wo_trans=runs/tuev/wo_trans/preds_eval.npz wo_conv=runs/tuev/wo_conv/preds_eval.npz \
+    --group patient --latex results/mcnemar_tuev.tex
+```
+
+For each compared model the script reports:
+- *b*, the windows only the reference model gets right, and *c*, the windows only the other model gets right;
+- the continuity-corrected McNemar χ² and its p-value (exact binomial test when *b* + *c* < 25);
+- the clustered McNemar test (Durkalski et al., 2003), which treats each recording as one unit (`--group patient`:
+  each TUEV patient).
+
+Windows overlap by 50 % and many come from the same recording, so they are not independent. The window-level
+p-value therefore overstates significance; report the clustered one. All p-values are Holm-adjusted over the
+compared models. Predictions from other code can be compared too: save an `.npz` with `files` (window file names),
+`y` (class indices) and `pred`.
+
 ## Ablation variants
 
 Every variant has the same interface: `build_model(name, n_classes)`. Pass `--model <name>` to `train.py`, or run
@@ -162,6 +188,7 @@ neurotransformer/        installable package
   data/                  dataset class, label maps, TUEV/Bonn preprocessing
   engine.py              training loop, evaluation and metrics
   benchmark.py           parameters, FLOPs, latency
+  stats.py               McNemar tests (window-level and clustered by recording/patient)
   visualization.py       confusion matrix, ROC, topomaps, EEG traces
 configs/                 per-dataset hyperparameters and the Bonn record split
 scripts/                 command-line entry points
