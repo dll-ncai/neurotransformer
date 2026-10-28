@@ -1,8 +1,9 @@
-"""Train Neurotransformer (or an ablation variant) on one dataset.
+"""Train Neurotransformer, an ablation variant or a baseline on one dataset.
 
 Example:
     python scripts/train.py --config configs/bonn.yaml --data-root data/bonn
     python scripts/train.py --config configs/bonn.yaml --model wo_decoder
+    python scripts/train.py --config configs/tuev.yaml --model scnet
 """
 
 import argparse
@@ -13,7 +14,7 @@ import yaml
 
 from neurotransformer.data import build_dataloaders, get_spec
 from neurotransformer.engine import append_results_csv, evaluate, fit, format_metrics
-from neurotransformer.models import MODEL_REGISTRY, build_model
+from neurotransformer.models import MODEL_NAMES, build_model
 from neurotransformer.utils import (build_criterion, build_optimizer, build_scheduler, count_params, load_config,
                                     resolve_class_counts, set_seed)
 
@@ -22,7 +23,7 @@ def parse_args():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--config", required=True, help="YAML config, e.g. configs/bonn.yaml")
     p.add_argument("--data-root", help="Folder with train/ eval/ [test/] (overrides the config)")
-    p.add_argument("--model", choices=list(MODEL_REGISTRY), help="Model name (overrides the config)")
+    p.add_argument("--model", choices=MODEL_NAMES, help="Model name (overrides the config)")
     p.add_argument("--epochs", type=int, help="Overrides the config")
     p.add_argument("--patience", type=int, help="Early-stopping patience in epochs (overrides the config)")
     p.add_argument("--batch-size", type=int, help="Overrides the config")

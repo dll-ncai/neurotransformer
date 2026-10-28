@@ -12,3 +12,7 @@ matplotlib
 thop
 # Notebooks
 jupyter
+# Optional: baselines (EEGNet and EEGConformer from braindecode; MiniRocket from sktime)
+braindecode==0.8.*
+sktime
+numba

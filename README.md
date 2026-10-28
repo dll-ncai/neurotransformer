@@ -7,6 +7,7 @@ events and abnormal activity in scalp EEG.
 This repository contains:
 
 - the model and six ablation variants (`neurotransformer/models/`)
+- the seven baseline models it is compared with (`neurotransformer/models/baselines/`)
 - preprocessing for the Bonn and TUEV datasets, plus the expected format for NMT events
 - training, evaluation and benchmarking scripts with the paper's hyperparameters (`configs/`)
 - notebooks covering preprocessing, training, ablations, visualisation and inference cost
@@ -35,7 +36,8 @@ Transformer encoder and decoder. A fully connected layer maps the decoder output
 git clone <this-repo-url> Neurotransformer
 cd Neurotransformer
 pip install -e .            # core: torch, numpy, scipy, scikit-learn, pandas, pyyaml, tqdm
-pip install -e ".[all]"     # + mne, matplotlib, thop, jupyter (preprocessing, plots, FLOPs, notebooks)
+pip install -e ".[baselines]"  # + braindecode 0.8, sktime, numba (baseline models)
+pip install -e ".[all]"     # everything: preprocessing, plots, FLOPs, notebooks and baselines
 ```
 
 Python ≥ 3.8 and PyTorch ≥ 1.12 are required. Install the PyTorch build that matches your CUDA version first, following
@@ -170,6 +172,30 @@ Every variant has the same interface: `build_model(name, n_classes)`. Pass `--mo
 Parameter counts are for 3 classes. `python scripts/benchmark.py` also reports FLOPs and CPU/GPU latency on your
 hardware.
 
+## Baselines
+
+The baselines from the paper's comparison are built and trained the same way as Neurotransformer, by name:
+`build_model(name, n_classes)` or `--model <name>` in `train.py` and `evaluate.py`. All take `(batch, 1, 400)` windows.
+
+| Name | Model | Implementation | Parameters |
+|---|---|---|---|
+| `eegnet` | EEGNet-v4 ([Lawhern et al., 2018](https://doi.org/10.1088/1741-2552/aace8c)) | braindecode 0.8 | 1,699 |
+| `eegconformer` | EEG Conformer ([Song et al., 2023](https://doi.org/10.1109/TNSRE.2022.3230250)) | braindecode 0.8, `final_fc_length="auto"` | 346,339 |
+| `scnet` | SCNet (Wu et al., 2023) | this repository | 31,163 |
+| `wavenet_lstm` | WaveNet+LSTM (Albaqami et al., 2023) | this repository | 259,253 |
+| `inceptiontime` | InceptionTime ([Ismail Fawaz et al., 2020](https://doi.org/10.1007/s10618-020-00710-y)), one network | this repository | 436,035 |
+| `minirocket` | MiniRocket ([Dempster et al., 2021](https://doi.org/10.1145/3447548.3467231)) + linear head | sktime transform | 29,991 trainable |
+| `leednet_raw` | LEEDNet (Alqarni et al., 2026), raw-EEG branch only | this repository | 2,598 |
+
+Parameter counts are for 3 classes. Notes:
+- **EEGNet, EEGConformer and MiniRocket** need the `baselines` extra. Other braindecode versions rename models
+  and layers, so checkpoints trained with 0.8 may not load in them.
+- **MiniRocket** fits its fixed random kernels (dilations and biases) on the first training batch it sees; after
+  that only the linear head is trained. The fitted transform is saved in the checkpoint. Call
+  `model.fit_transform_params(x)` first to fit it on more data instead.
+- **LEEDNet** also has power-spectrum and wavelet branches; only the raw-EEG branch is included, which is the
+  version behind the paper's results.
+
 ## Notebooks
 
 | Notebook | Contents |
@@ -184,7 +210,7 @@ hardware.
 
 ```
 neurotransformer/        installable package
-  models/                Neurotransformer, blocks, ablation variants, registry
+  models/                Neurotransformer, blocks, ablation variants, baselines, registry
   data/                  dataset class, label maps, TUEV/Bonn preprocessing
   engine.py              training loop, evaluation and metrics
   benchmark.py           parameters, FLOPs, latency

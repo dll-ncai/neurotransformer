@@ -19,7 +19,7 @@ import torch
 
 from neurotransformer.data import NpzEEGDataset, build_dataloaders, get_spec
 from neurotransformer.engine import append_results_csv, compute_metrics, format_metrics, predict
-from neurotransformer.models import MODEL_REGISTRY, build_model
+from neurotransformer.models import MODEL_NAMES, build_model
 from neurotransformer.utils import build_criterion, load_config, resolve_class_counts
 
 
@@ -29,7 +29,7 @@ def main():
     p.add_argument("--checkpoint", required=True)
     p.add_argument("--split", default="test", choices=["train", "eval", "test"])
     p.add_argument("--data-root", help="Overrides the config")
-    p.add_argument("--model", choices=list(MODEL_REGISTRY), help="Overrides the config")
+    p.add_argument("--model", choices=MODEL_NAMES, help="Overrides the config")
     p.add_argument("--output", default="results/results.csv", help="CSV to append the metrics to")
     p.add_argument("--save-preds", help="Also save per-window predictions to this .npz (input for mcnemar.py)")
     p.add_argument("--batch-size", type=int, default=64)
